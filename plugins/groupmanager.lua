@@ -2744,7 +2744,7 @@ if matches[2] == "keyboard" or matches[2] == "کیبورد" then
 return unmute_keyboard(msg ,data, target)
 end
 end
-if matches[1] == "gpinfo" and is_mod(msg) or matches[1] == "اطلاعات گروه" and is_mod(msg) and msg.to.type == "channel" then
+if matches[1] == "gpinfo" and is_mod(msg) then
 local function group_info(arg, data)
 local hash = "gp_lang:"..arg.chat_id
 local lang = redis:get(hash)
@@ -2759,7 +2759,7 @@ end
 end
  tdcli.getChannelFull(msg.to.id, group_info, {chat_id=msg.to.id,msg_id=msg.id})
 end
-if matches[1] == 'newlink' and is_mod(msg) or matches[1] == 'لینک جدید' and is_mod(msg) then
+if matches[1] == 'newlink' and is_mod(msg) then
 			local function callback_link (arg, data)
    local hash = "gp_lang:"..msg.to.id
    local lang = redis:get(hash)
@@ -2784,7 +2784,7 @@ if matches[1] == 'newlink' and is_mod(msg) or matches[1] == 'لینک جدید' 
 			end
  tdcli.exportChatInviteLink(msg.to.id, callback_link, nil)
 		end
-		if matches[1] == 'setlink' and is_owner(msg) or matches[1] == 'ست لینک' and is_owner(msg) then
+		if matches[1] == 'setlink' and is_owner(msg) then
 			data[tostring(chat)]['settings']['linkgp'] = 'waiting'
 			save_data(_config.moderation.data, data)
       if not lang then
@@ -2806,7 +2806,7 @@ if matches[1] == 'newlink' and is_mod(msg) or matches[1] == 'لینک جدید' 
 		 	end
        end
 		end
-    if matches[1] == 'link' and is_mod(msg) or matches[1] == 'لینک' and is_mod(msg) then
+    if matches[1] == 'link' and is_mod(msg) then
       local linkgp = data[tostring(chat)]['settings']['linkgp']
       if not linkgp then
       if not lang then
@@ -2822,7 +2822,7 @@ if matches[1] == 'newlink' and is_mod(msg) or matches[1] == 'لینک جدید' 
          end
         return tdcli.sendMessage(chat, msg.id, 1, text, 1, 'html')
      end
-    if matches[1] == 'linkpv' and is_mod(msg) or matches[1] == 'لینک پیوی' and is_mod(msg) then
+    if matches[1] == 'linkpv' and is_mod(msg) then
       local linkgp = data[tostring(chat)]['settings']['linkgp']
       if not linkgp then
       if not lang then
@@ -2842,7 +2842,7 @@ if matches[1] == 'newlink' and is_mod(msg) or matches[1] == 'لینک جدید' 
         return "_لینک گروه به چت خصوصی شما ارسال شد_"
         end
      end
-  if matches[1] == "setrules" or matches[1] == "تنظیم قوانین" and matches[2] and is_mod(msg) then
+  if matches[1] == "setrules" and matches[2] and is_mod(msg) then
     data[tostring(chat)]['rules'] = matches[2]
 	  save_data(_config.moderation.data, data)
      if not lang then
@@ -2851,7 +2851,7 @@ if matches[1] == 'newlink' and is_mod(msg) or matches[1] == 'لینک جدید' 
   return "قوانین گروه ثبت شد"
    end
   end
-  if matches[1] == "rules" or matches[1] == "قوانین" then
+  if matches[1] == "rules" then
  if not data[tostring(chat)]['rules'] then
    if not lang then
      rules = "ℹ️ The Default Rules :\n1⃣ No Flood.\n2⃣ No Spam.\n3⃣ No Advertising.\n4⃣ Try to stay on topic.\n5⃣ Forbidden any racist, sexual, homophobic or gore content.\n➡️ Repeated failure to comply with these rules will cause ban.\n@BeyondTeam"
@@ -2863,19 +2863,19 @@ if matches[1] == 'newlink' and is_mod(msg) or matches[1] == 'لینک جدید' 
       end
     return rules
   end
-if matches[1] == "res" or matches[1] == "اطلاعات" and matches[2] and is_mod(msg) then
+if matches[1] == "res" and matches[2] and is_mod(msg) then
     tdcli_function ({
       ID = "SearchPublicChat",
       username_ = matches[2]
     }, action_by_username, {chat_id=msg.to.id,username=matches[2],cmd="res"})
   end
-if matches[1] == "whois" or matches[1] == "نمایش کاربر" and matches[2] and is_mod(msg) then
+if matches[1] == "whois" and matches[2] and is_mod(msg) then
 tdcli_function ({
     ID = "GetUser",
     user_id_ = matches[2],
   }, action_by_id, {chat_id=msg.to.id,user_id=matches[2],cmd="whois"})
   end
-  if matches[1] == 'setflood' and is_mod(msg) or matches[1] == 'تنظیم فلود' and is_mod(msg) then
+  if matches[1] == 'setflood' and is_mod(msg) and is_mod(msg) then
 			if tonumber(matches[2]) < 1 or tonumber(matches[2]) > 50 then
 				return "_Wrong number, range is_ *[1-50]*"
       end
@@ -2884,8 +2884,8 @@ tdcli_function ({
 			save_data(_config.moderation.data, data)
     return "_Group_ *flood* _sensitivity has been set to :_ *[ "..matches[2].." ]*"
        end
-		if matches[1]:lower() == 'clean' and is_owner(msg) or matches[1]:lower() == 'حذف' and is_owner(msg) then
-			if matches[2] == 'mods' or matches[2] == 'مدیران' then
+		if matches[1]:lower() == 'clean' and is_owner(msg) and is_owner(msg) then
+			if matches[2] == 'mods' then
 				if next(data[tostring(chat)]['mods']) == nil then
             if not lang then
 					return "_No_ *moderators* _in this group_"
@@ -2903,7 +2903,7 @@ tdcli_function ({
             return "تمام مدیران گروه تنزیل مقام شدند"
 			end
          end
-			if matches[2] == 'filterlist' or matches[2] == 'فیلتر لیست' then
+			if matches[2] == 'filterlist' then
 				if next(data[tostring(chat)]['filterlist']) == nil then
      if not lang then
 					return "*Filtered words list* _is empty_"
@@ -2937,7 +2937,7 @@ tdcli_function ({
             return "قوانین گروه پاک شد"
 			end
        end
-			if matches[2] == 'welcome' or matches[2] == 'ولکام' then
+			if matches[2] == 'welcome' then
 				if not data[tostring(chat)]['setwelcome'] then
             if not lang then
 					return "*Welcome Message not set*"
@@ -2953,7 +2953,7 @@ tdcli_function ({
             return "پیام خوشآمد گویی پاک شد"
 			end
        end
-			if matches[2] == 'about' or matches[2] == 'پیام گروه' then
+			if matches[2] == 'about' then
         if msg.to.type == "chat" then
 				if not data[tostring(chat)]['about'] then
             if not lang then
@@ -2994,11 +2994,11 @@ tdcli_function ({
           end
 			end
      end
-if matches[1] == "setname" or matches[1] == "تنظیم نام" and matches[2] and is_mod(msg) then
+if matches[1] == "setname" and matches[2] and is_mod(msg) then
 local gp_name = matches[2]
 tdcli.changeChatTitle(chat, gp_name, dl_cb, nil)
 end
-  if matches[1] == "setabout" or matches[1] == "تنظیم پیام" and matches[2] and is_mod(msg) then
+  if matches[1] == "setabout" and matches[2] and is_mod(msg) then
      if msg.to.type == "channel" then
    tdcli.changeChannelAbout(chat, matches[2], dl_cb, nil)
     elseif msg.to.type == "chat" then
@@ -3023,41 +3023,41 @@ end
       end
     return about
   end
-  if matches[1] == 'filter' and is_mod(msg) or matches[1] == 'فیلتر' and is_mod(msg) then
+  if matches[1] == 'filter' and is_mod(msg) then
     return filter_word(msg, matches[2])
   end
-  if matches[1] == 'unfilter' and is_mod(msg) or matches[1] == 'لغوفیلتر' and is_mod(msg) then
+  if matches[1] == 'unfilter' and is_mod(msg) then
     return unfilter_word(msg, matches[2])
   end
-  if matches[1] == 'filterlist' and is_mod(msg) or matches[1] == 'فیلترلیست' and is_mod(msg) then
+  if matches[1] == 'filterlist' and is_mod(msg) then
     return filter_list(msg)
   end
-if matches[1] == "settings" or matches[1] == "ستینگ" then
+if matches[1] == "settings" then
 return group_settings(msg, target)
 end
-if matches[1] == "mutelist" or matches[1] == "لیست سکوت" then
+if matches[1] == "mutelist" then
 return mutes(msg, target)
 end
-if matches[1] == "modlist" or matches[1] == "لیست مدیران" then
+if matches[1] == "modlist" then
 return modlist(msg)
 end
-if matches[1] == "ownerlist" and is_owner(msg) or matches[1] == "اونر لیست" and is_owner(msg) then
+if matches[1] == "ownerlist" and is_owner(msg) then
 return ownerlist(msg)
 end
 
-if matches[1] == "setlang" and is_owner(msg) or matches[1] == "تنظیم زبان" and is_owner(msg) then
-   if matches[2] == "en" or matches[2] == "1" then
+if matches[1] == "setlang" and is_owner(msg) then
+   if matches[2] == "en" then
 local hash = "gp_lang:"..msg.to.id
 local lang = redis:get(hash)
  redis:del(hash)
 return "_Group Language Set To:_ EN"
-  elseif matches[2] == "fa" or matches[2] == "2" then
+  elseif matches[2] == "fa" then
 redis:set(hash, true)
 return "*زبان گروه تنظیم شد به : فارسی*"
 end
 end
 
-if matches[1] == "help" and is_mod(msg) or matches[1] == "دستورات" and is_mod(msg) then
+if matches[1] == "help" and is_mod(msg) then
 if not lang then
 text = [[
 *Beyond Bot Commands:*
@@ -3330,8 +3330,8 @@ end
 return text
 end
 --------------------- Welcome -----------------------
-	if matches[1] == "welcome" and is_mod(msg) or matches[1] == "ولکام" and is_mod(msg) then
-		if matches[2] == "enable" or matches[2] == "فعال" then
+	if matches[1] == "welcome" and is_mod(msg) then
+		if matches[2] == "enable" then
 			welcome = data[tostring(chat)]['settings']['welcome']
 			if welcome == "yes" then
        if not lang then
@@ -3350,7 +3350,7 @@ end
 			end
 		end
 		
-		if matches[2] == "disable" or matches[2] == "غیرفعال" then
+		if matches[2] == "disable" then
 			welcome = data[tostring(chat)]['settings']['welcome']
 			if welcome == "no" then
       if not lang then
@@ -3369,7 +3369,7 @@ end
 			end
 		end
 	end
-	if matches[1] == "setwelcome" and matches[2] and is_mod(msg) or matches[1] == "تنظیم ولکام" and matches[2] and is_mod(msg) then
+	if matches[1] == "setwelcome" and matches[2] and is_mod(msg) and matches[2] and is_mod(msg) then
 		data[tostring(chat)]['setwelcome'] = matches[2]
 	    save_data(_config.moderation.data, data)
        if not lang then
@@ -3535,7 +3535,6 @@ patterns ={
 "^(تنظیم ولکام) (.*)",
 "^[!/#](welcome) (.*)$"
 "^(ولکام) (.*)$"
-
 },
 run=run,
 pre_process = pre_process
